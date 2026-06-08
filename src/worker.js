@@ -200,17 +200,6 @@ function landingPage() {
     }
     a { color: inherit; }
     .wrap { width: min(1180px, calc(100% - 80px)); margin: 0 auto; position: relative; }
-    .announce {
-      border-bottom: 1px solid var(--line);
-      min-height: 52px;
-      display: grid;
-      place-items: center;
-      color: #f2f2f2;
-      font-weight: 700;
-      letter-spacing: .01em;
-      text-align: center;
-    }
-    .announce span { color: var(--orange); margin-right: 8px; }
     .topbar {
       height: 72px;
       border-bottom: 1px solid var(--line);
@@ -247,7 +236,7 @@ function landingPage() {
     .hero {
       padding: 72px 0 56px;
       display: grid;
-      grid-template-columns: minmax(0, 1.05fr) minmax(300px, .72fr);
+      grid-template-columns: minmax(0, 1fr);
       gap: 52px;
       align-items: center;
     }
@@ -309,33 +298,6 @@ function landingPage() {
       box-shadow: 0 12px 35px rgba(255,86,61,.2);
     }
     .button:hover { transform: translateY(-1px); border-color: var(--line-strong); }
-    .coin-card {
-      width: min(330px, 100%);
-      aspect-ratio: 1;
-      margin: 0 auto;
-      border-radius: 48px;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.02)),
-        #242629;
-      border: 1px solid rgba(255,255,255,.08);
-      box-shadow: 0 34px 90px rgba(0,0,0,.48);
-      display: grid;
-      place-items: center;
-      transform: rotate(14deg);
-      opacity: .78;
-    }
-    .coin-card span {
-      display: grid;
-      place-items: center;
-      width: 148px;
-      height: 148px;
-      border-radius: 50%;
-      color: #0f1012;
-      background: rgba(0,0,0,.54);
-      font-size: 76px;
-      font-weight: 800;
-      transform: rotate(-14deg);
-    }
     .quick-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -521,11 +483,9 @@ function landingPage() {
     }
     @media (max-width: 960px) {
       .wrap { width: min(100% - 32px, 1180px); }
-      .announce { padding: 12px 16px; }
       .topbar { height: auto; padding: 18px 0; align-items: flex-start; }
       nav { gap: 16px; flex-wrap: wrap; justify-content: flex-end; }
       .hero { grid-template-columns: 1fr; padding-top: 52px; }
-      .coin-card { display: none; }
       .quick-grid, .notes, .example-card { grid-template-columns: 1fr; }
       .endpoint-tile { border-right: 0; border-bottom: 1px solid var(--line); }
       .endpoint-tile:last-child { border-bottom: 0; }
@@ -536,8 +496,6 @@ function landingPage() {
   </style>
 </head>
 <body>
-  <div class="announce"><span>🚀</span> Crypto-Casinos.com Data API — normalized casino terms, payment metadata and crypto speed ranges.</div>
-
   <div class="wrap">
     <header class="topbar">
       <a class="brand" href="https://crypto-casinos.com/" aria-label="Crypto Casinos home">${BRAND_LOGO_SVG}</a>
@@ -561,7 +519,6 @@ function landingPage() {
             <a class="button" href="#endpoints">Browse endpoints</a>
           </div>
         </div>
-        <div class="coin-card" aria-hidden="true"><span>✣</span></div>
       </section>
 
       <nav class="quick-grid" id="endpoints" aria-label="API endpoints">
