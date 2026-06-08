@@ -37,7 +37,7 @@ function securityHeaders() {
     'X-Content-Type-Options': 'nosniff',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-    'Content-Security-Policy': "default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://pnqjpernfcxlvmjvkdqe.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
+    'Content-Security-Policy': "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://pnqjpernfcxlvmjvkdqe.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
   };
 }
 
@@ -53,15 +53,13 @@ function jsonResponse(body, status = 200) {
 }
 
 function landingPage() {
-  const endpointRows = READ_ENDPOINTS.map((endpoint, index) => `
-    <a class="endpoint-row" href="${endpoint.example}" aria-label="Open example for ${endpoint.name}">
-      <span class="row-num">${String(index + 1).padStart(2, '0')}</span>
-      <span class="row-main">
-        <strong>${endpoint.name}</strong>
-        <small>${endpoint.description}</small>
-      </span>
-      <code>${endpoint.path}</code>
-      <span class="arrow">→</span>
+  const endpointTiles = READ_ENDPOINTS.map((endpoint, index) => `
+    <a class="endpoint-tile" href="${endpoint.example}" aria-label="Open example for ${endpoint.name}">
+      <span class="tile-icon">${['₿', '▦', '↯'][index] || '↗'}</span>
+      <span class="tile-arrow">↗</span>
+      <span class="tile-path">${endpoint.path}</span>
+      <strong>${endpoint.name}</strong>
+      <small>${endpoint.description}</small>
     </a>
   `).join('');
 
@@ -72,20 +70,28 @@ function landingPage() {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Crypto Casinos Data API</title>
   <meta name="description" content="Read-only casino terms and crypto payment metadata API for crypto-casinos.com.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inconsolata:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       color-scheme: dark;
-      --bg: #060606;
-      --surface: #111111;
-      --surface-2: #151515;
-      --line: #2a2a2a;
-      --line-soft: #1d1d1d;
-      --text: #f3f3f1;
-      --muted: #a2a2a0;
-      --faint: #686866;
-      --accent: #6aa9ff;
-      --ok: #6ee79a;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --bg: #0f1012;
+      --bg-2: #111315;
+      --card: #1a1d1f;
+      --card-2: #202326;
+      --line: rgba(255,255,255,.105);
+      --line-strong: rgba(255,255,255,.18);
+      --text: #ffffff;
+      --muted: #b8b8b8;
+      --soft: #7f8286;
+      --teal: #18d2c1;
+      --orange: #ff563d;
+      --yellow: #ffc72c;
+      --purple: #6757ff;
+      --radius: 22px;
+      --shadow: 0 22px 70px rgba(0,0,0,.44);
+      font-family: "Space Grotesk", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 16px;
     }
     * { box-sizing: border-box; }
@@ -96,286 +102,410 @@ function landingPage() {
       color: var(--text);
       background: var(--bg);
       text-rendering: optimizeLegibility;
+      letter-spacing: -.01em;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 84% 8%, rgba(255,86,61,.08), transparent 26rem),
+        radial-gradient(circle at 8% 26%, rgba(24,210,193,.06), transparent 34rem);
+      opacity: .9;
     }
     a { color: inherit; }
-    .wrap { width: min(1120px, calc(100% - 48px)); margin: 0 auto; }
+    .wrap { width: min(1180px, calc(100% - 80px)); margin: 0 auto; position: relative; }
+    .announce {
+      border-bottom: 1px solid var(--line);
+      min-height: 52px;
+      display: grid;
+      place-items: center;
+      color: #f2f2f2;
+      font-weight: 700;
+      letter-spacing: .01em;
+      text-align: center;
+    }
+    .announce span { color: var(--orange); margin-right: 8px; }
     .topbar {
-      height: 56px;
-      border-bottom: 1px solid var(--line-soft);
+      height: 72px;
+      border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      gap: 24px;
     }
     .brand {
       display: inline-flex;
       align-items: center;
       gap: 10px;
+      color: #fff;
       text-decoration: none;
-      font: 14px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      letter-spacing: -.02em;
+      font-weight: 700;
+      letter-spacing: -.03em;
     }
     .mark {
-      width: 24px;
-      height: 24px;
-      border-radius: 5px;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
       display: grid;
       place-items: center;
-      background: var(--text);
-      color: #050505;
-      font-weight: 800;
-      font-size: 11px;
+      background: #fff;
+      color: #0f1012;
+      font: 900 15px/1 "Space Grotesk", sans-serif;
+      transform: rotate(-7deg);
     }
-    nav { display: flex; align-items: center; gap: 28px; }
+    nav { display: flex; align-items: center; gap: 30px; }
     nav a {
-      color: var(--muted);
+      color: #d2d2d2;
       text-decoration: none;
-      font: 13px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 15px;
+      font-weight: 500;
     }
-    nav a:hover { color: var(--text); }
+    nav a:hover { color: #fff; }
     .hero {
-      padding: 108px 0 70px;
-      max-width: 760px;
+      padding: 72px 0 56px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, .72fr);
+      gap: 52px;
+      align-items: center;
     }
-    .pill {
+    .trust-pill {
       display: inline-flex;
       align-items: center;
-      gap: 9px;
-      padding: 7px 11px;
-      border: 1px solid #213857;
-      border-radius: 4px;
-      background: #102033;
-      color: #8fc2ff;
-      font: 12px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 12px 18px;
+      color: #d8d8d8;
+      background: rgba(255,255,255,.015);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.3);
+      font-size: 14px;
     }
-    .pill::before {
-      content: '';
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--accent);
+    .trust-pill .shield { color: var(--orange); }
+    .kicker {
+      margin: 44px 0 18px;
+      color: var(--teal);
+      font-size: 17px;
+      font-weight: 500;
     }
     h1 {
-      margin: 24px 0 22px;
-      max-width: 720px;
-      font-size: clamp(42px, 7vw, 72px);
-      line-height: .96;
-      letter-spacing: -.06em;
-      font-weight: 760;
+      max-width: 780px;
+      margin: 0;
+      font-size: clamp(50px, 7.2vw, 82px);
+      line-height: .94;
+      letter-spacing: -.072em;
+      font-weight: 700;
       text-wrap: balance;
     }
+    h1 .muted-word { color: rgba(255,255,255,.48); }
     .lead {
-      max-width: 720px;
-      margin: 0;
-      color: var(--muted);
-      font-size: clamp(17px, 2vw, 20px);
-      line-height: 1.6;
+      max-width: 680px;
+      margin: 24px 0 0;
+      color: #b8b8b8;
+      font-size: clamp(18px, 2vw, 21px);
+      line-height: 1.55;
+      letter-spacing: -.018em;
     }
-    .sublead {
-      max-width: 720px;
-      margin: 18px 0 0;
-      color: var(--faint);
-      font-size: 14px;
-      line-height: 1.65;
-    }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-      align-items: center;
-      margin-top: 40px;
-    }
+    .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; align-items: center; }
     .button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 40px;
-      padding: 0 20px;
-      border-radius: 4px;
+      min-height: 54px;
+      padding: 0 24px;
+      border-radius: 10px;
       border: 1px solid var(--line);
-      background: transparent;
-      color: var(--muted);
+      background: rgba(255,255,255,.05);
+      color: #fff;
       text-decoration: none;
-      font: 13px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 600;
+      letter-spacing: -.01em;
     }
     .button.primary {
-      background: var(--text);
-      color: #050505;
-      border-color: var(--text);
+      background: var(--orange);
+      border-color: var(--orange);
+      box-shadow: 0 12px 35px rgba(255,86,61,.2);
+    }
+    .button:hover { transform: translateY(-1px); border-color: var(--line-strong); }
+    .coin-card {
+      width: min(330px, 100%);
+      aspect-ratio: 1;
+      margin: 0 auto;
+      border-radius: 48px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.02)),
+        #242629;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 34px 90px rgba(0,0,0,.48);
+      display: grid;
+      place-items: center;
+      transform: rotate(14deg);
+      opacity: .78;
+    }
+    .coin-card span {
+      display: grid;
+      place-items: center;
+      width: 148px;
+      height: 148px;
+      border-radius: 50%;
+      color: #0f1012;
+      background: rgba(0,0,0,.54);
+      font-size: 76px;
+      font-weight: 800;
+      transform: rotate(-14deg);
+    }
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.055), transparent 22rem),
+        linear-gradient(135deg, #181b1d, #17191b 55%, #1d2022);
+      box-shadow: var(--shadow), inset 0 0 0 1px rgba(0,0,0,.9);
+    }
+    .endpoint-tile {
+      position: relative;
+      min-height: 216px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 10px;
+      text-decoration: none;
+      border-right: 1px solid var(--line);
+      isolation: isolate;
+    }
+    .endpoint-tile:last-child { border-right: 0; }
+    .endpoint-tile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 9px 9px;
+      opacity: .08;
+      z-index: -1;
+    }
+    .endpoint-tile:hover { background: rgba(255,255,255,.035); }
+    .tile-icon {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: #0e0f10;
+      font-size: 22px;
       font-weight: 700;
     }
-    .button:hover { color: var(--text); border-color: #454545; }
-    .button.primary:hover { color: #050505; background: #ffffff; }
+    .endpoint-tile:nth-child(2) .tile-icon { color: var(--yellow); }
+    .endpoint-tile:nth-child(3) .tile-icon { color: var(--teal); }
+    .tile-arrow { position: absolute; top: 28px; right: 28px; color: #d7d7d7; font-size: 18px; }
+    .tile-path {
+      color: var(--soft);
+      font: 600 12px/1.4 Inconsolata, ui-monospace, monospace;
+      word-break: break-all;
+      text-transform: uppercase;
+    }
+    .endpoint-tile strong { font-size: 19px; line-height: 1.25; letter-spacing: -.025em; }
+    .endpoint-tile small { color: #b7b7b7; font-size: 15px; line-height: 1.45; max-width: 260px; }
     .section {
-      border-top: 1px solid var(--line-soft);
       padding: 72px 0;
+      border-top: 1px solid var(--line);
     }
-    .label {
-      margin: 0 0 18px;
-      color: var(--faint);
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      font: 12px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 30px;
     }
-    .two-col {
-      display: grid;
-      grid-template-columns: minmax(0, .86fr) minmax(420px, 1.14fr);
-      gap: 48px;
-      align-items: start;
-    }
-    h2 {
-      margin: 0 0 14px;
-      font-size: clamp(26px, 4vw, 38px);
+    .section h2 {
+      margin: 0;
+      font-size: clamp(34px, 4.5vw, 46px);
       line-height: 1.08;
-      letter-spacing: -.045em;
+      letter-spacing: -.055em;
     }
-    .copy p {
-      margin: 0 0 14px;
-      color: var(--muted);
-      line-height: 1.65;
-    }
-    .terminal {
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--surface);
+    .section p { color: var(--muted); line-height: 1.6; font-size: 18px; margin: 10px 0 0; max-width: 700px; }
+    .example-card {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
       overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--line-strong);
+      background:
+        radial-gradient(circle at top left, rgba(24,210,193,.08), transparent 24rem),
+        linear-gradient(135deg, #1a1d1f, #17191b);
+      box-shadow: var(--shadow), inset 0 0 0 1px rgba(0,0,0,.86);
     }
-    .terminal-head {
-      padding: 13px 18px;
-      border-bottom: 1px solid var(--line-soft);
-      color: var(--faint);
-      font: 12px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    .example-copy { padding: 38px; border-right: 1px solid var(--line); }
+    .example-copy .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(24,210,193,.12);
+      color: var(--teal);
+      font: 700 12px/1 Inconsolata, ui-monospace, monospace;
       text-transform: uppercase;
-      letter-spacing: .08em;
+    }
+    .example-copy h3 { margin: 24px 0 14px; font-size: 30px; line-height: 1.12; letter-spacing: -.04em; }
+    .terminal { min-width: 0; background: rgba(10,11,12,.58); }
+    .terminal-head {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--line);
+      color: var(--soft);
+      font: 700 13px/1 Inconsolata, ui-monospace, monospace;
+      text-transform: uppercase;
+      letter-spacing: .04em;
     }
     pre {
       margin: 0;
-      padding: 20px;
+      padding: 24px;
       overflow: auto;
-      color: #d8d8d6;
-      font: 13px/1.75 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #e5e5e5;
+      font: 500 14px/1.75 Inconsolata, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       white-space: pre;
     }
-    .dim { color: var(--faint); }
-    .blue { color: #8fc2ff; }
-    .endpoints {
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      overflow: hidden;
-      background: #0b0b0b;
-    }
-    .endpoint-row {
-      display: grid;
-      grid-template-columns: 44px minmax(220px, 1fr) minmax(220px, auto) 28px;
-      gap: 18px;
-      align-items: center;
-      min-height: 82px;
-      padding: 18px 20px;
-      text-decoration: none;
-      border-bottom: 1px solid var(--line-soft);
-    }
-    .endpoint-row:last-child { border-bottom: 0; }
-    .endpoint-row:hover { background: var(--surface); }
-    .row-num, .arrow {
-      color: var(--faint);
-      font: 12px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-    .row-main { display: grid; gap: 7px; }
-    .row-main strong { font-size: 16px; letter-spacing: -.01em; }
-    .row-main small { color: var(--muted); line-height: 1.45; }
-    .endpoint-row code {
-      color: var(--muted);
-      font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      word-break: break-all;
-    }
-    .note-grid {
+    .dim { color: #7c8085; }
+    .teal { color: var(--teal); }
+    .orange { color: var(--orange); }
+    .notes {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
+      gap: 14px;
     }
     .note {
-      min-height: 180px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--surface);
-      padding: 22px;
+      min-height: 210px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.05), transparent 20rem),
+        linear-gradient(135deg, #1b1e20, #17191b);
+      padding: 30px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.9);
     }
-    .note h3 {
-      margin: 0 0 14px;
-      font-size: 18px;
-      letter-spacing: -.025em;
+    .note-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      color: var(--teal);
+      font-size: 24px;
+      margin-bottom: 34px;
     }
-    .note p, .note li {
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 14px;
-    }
+    .note:nth-child(2) .note-icon { color: var(--orange); }
+    .note:nth-child(3) .note-icon { color: var(--yellow); }
+    .note h3 { margin: 0 0 12px; font-size: 24px; line-height: 1.15; letter-spacing: -.04em; }
+    .note p, .note li { color: #b8b8b8; line-height: 1.55; font-size: 15px; }
     .note p { margin: 0; }
     .note ul { margin: 0; padding-left: 18px; }
     code.inline {
-      color: #e6e6e3;
-      background: #171717;
+      color: #fff;
+      background: #0f1012;
       border: 1px solid var(--line);
-      border-radius: 4px;
-      padding: 2px 5px;
-      font: 12px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font: 600 13px/1 Inconsolata, ui-monospace, monospace;
     }
+    .cta-strip {
+      margin: 10px 0 76px;
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      background-image: radial-gradient(rgba(255,255,255,.20) 1px, transparent 1px);
+      background-size: 8px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+    .cta-strip p { margin: 0; color: #c4c4c4; max-width: 560px; line-height: 1.55; }
     footer {
-      border-top: 1px solid var(--line-soft);
-      padding: 28px 0 42px;
-      color: var(--faint);
+      border-top: 1px solid var(--line);
+      padding: 34px 0 48px;
+      color: #8b8b8b;
       display: flex;
       justify-content: space-between;
       gap: 24px;
-      font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 14px;
     }
-    @media (max-width: 900px) {
-      .wrap { width: min(100% - 32px, 1120px); }
+    @media (max-width: 960px) {
+      .wrap { width: min(100% - 32px, 1180px); }
+      .announce { padding: 12px 16px; }
       .topbar { height: auto; padding: 18px 0; align-items: flex-start; }
-      nav { gap: 14px; flex-wrap: wrap; justify-content: flex-end; }
-      .hero { padding: 72px 0 56px; }
-      .two-col { grid-template-columns: 1fr; gap: 28px; }
-      .endpoint-row { grid-template-columns: 34px 1fr 24px; }
-      .endpoint-row code { grid-column: 2 / -1; }
-      .note-grid { grid-template-columns: 1fr; }
-      footer { flex-direction: column; }
+      nav { gap: 16px; flex-wrap: wrap; justify-content: flex-end; }
+      .hero { grid-template-columns: 1fr; padding-top: 52px; }
+      .coin-card { display: none; }
+      .quick-grid, .notes, .example-card { grid-template-columns: 1fr; }
+      .endpoint-tile { border-right: 0; border-bottom: 1px solid var(--line); }
+      .endpoint-tile:last-child { border-bottom: 0; }
+      .example-copy { border-right: 0; border-bottom: 1px solid var(--line); }
+      .section-head, .cta-strip, footer { flex-direction: column; align-items: flex-start; }
+      h1 { font-size: clamp(46px, 12vw, 72px); }
     }
   </style>
 </head>
 <body>
+  <div class="announce"><span>🚀</span> Crypto-Casinos.com Data API — normalized casino terms, payment metadata and crypto speed ranges.</div>
+
   <div class="wrap">
     <header class="topbar">
-      <a class="brand" href="https://crypto-casinos.com/" aria-label="Crypto Casinos home"><span class="mark">cc</span><span>Crypto Casinos Data API</span></a>
+      <a class="brand" href="https://crypto-casinos.com/" aria-label="Crypto Casinos home"><span class="mark">✣</span><span>Crypto-Casinos.com</span></a>
       <nav aria-label="Primary navigation">
-        <a href="#endpoints">endpoints</a>
-        <a href="/openapi.json">openapi</a>
-        <a href="https://crypto-casinos.com/">crypto-casinos.com</a>
+        <a href="#endpoints">Endpoints</a>
+        <a href="#example">Example</a>
+        <a href="/openapi.json">OpenAPI</a>
+        <a href="https://crypto-casinos.com/">Main site</a>
       </nav>
     </header>
 
     <main>
       <section class="hero">
-        <span class="pill">read-only casino terms api</span>
-        <h1>Structured casino terms data for apps, research, and agents.</h1>
-        <p class="lead">Query normalized casino data, payment methods, restricted countries, game counts, and crypto transaction-speed metadata through a clean REST API.</p>
-        <p class="sublead">Source-backed datapoints from the Crypto Casinos research database. Built for lightweight frontend integrations, compliance checks, SEO workflows, and internal tools.</p>
-        <div class="actions">
-          <a class="button primary" href="/rest/v1/api_brand_values?limit=5">try the api →</a>
-          <a class="button" href="#example">view example ↓</a>
+        <div>
+          <div class="trust-pill"><span class="shield">♢</span> Read-only API for verified crypto casino data</div>
+          <div class="kicker">Crypto Casinos Data API</div>
+          <h1>Unlock source-backed <span class="muted-word">casino terms</span> and crypto payment data.</h1>
+          <p class="lead">Skip the bullshit and query normalized casino terms, payment methods, restricted countries, game counts, and approximate crypto transaction-speed metadata.</p>
+          <div class="actions">
+            <a class="button primary" href="/rest/v1/api_brand_values?limit=5">Explore API</a>
+            <a class="button" href="#endpoints">Browse endpoints</a>
+          </div>
         </div>
+        <div class="coin-card" aria-hidden="true"><span>✣</span></div>
       </section>
 
-      <section class="section two-col" id="example">
-        <div class="copy">
-          <p class="label">~/api-example</p>
-          <h2>Simple REST endpoints backed by Supabase views.</h2>
-          <p>Use PostgREST filters to query individual casinos, fields, or crypto assets. API responses include normalized values plus provenance fields where available.</p>
+      <nav class="quick-grid" id="endpoints" aria-label="API endpoints">
+        ${endpointTiles}
+      </nav>
+
+      <section class="section" id="example">
+        <div class="section-head">
+          <div>
+            <h2>API example</h2>
+            <p>Simple PostgREST endpoints backed by read-only Supabase views.</p>
+          </div>
+          <a class="button" href="/openapi.json">OpenAPI spec</a>
         </div>
-        <div class="terminal" aria-label="API example">
-          <div class="terminal-head">curl example</div>
-          <pre><span class="dim">$</span> curl <span class="blue">${API_BASE}/rest/v1/api_crypto_transaction_speeds?symbol=eq.BTC</span> \
-  -H "apikey: public api key" \
-  -H "Authorization: same public api key"
+        <div class="example-card">
+          <div class="example-copy">
+            <span class="badge">Live endpoint</span>
+            <h3>Filter by casino, field, domain, or crypto asset.</h3>
+            <p>Responses include normalized values and provenance fields where available, so apps and agents can show caveats instead of guessing.</p>
+          </div>
+          <div class="terminal" aria-label="API example">
+            <div class="terminal-head">~/crypto-speed-request</div>
+            <pre><span class="dim">$</span> curl <span class="teal">${API_BASE}/rest/v1/api_crypto_transaction_speeds?symbol=eq.BTC</span> \
+  -H <span class="orange">"apikey: public api key"</span> \
+  -H <span class="orange">"Authorization: same public api key"</span>
 
 {
   "symbol": "BTC",
@@ -383,28 +513,30 @@ function landingPage() {
   "ecosystem": "Bitcoin",
   "transaction_speed_range": "10 min to 1 hr"
 }</pre>
-        </div>
-      </section>
-
-      <section class="section" id="endpoints">
-        <p class="label">~/endpoints</p>
-        <div class="endpoints">
-          ${endpointRows}
+          </div>
         </div>
       </section>
 
       <section class="section">
-        <p class="label">~/usage-notes</p>
-        <div class="note-grid">
+        <div class="section-head">
+          <div>
+            <h2>Built for integrations</h2>
+            <p>Use it for comparison pages, browser extensions, dashboards, compliance checks, SEO workflows and AI agents.</p>
+          </div>
+        </div>
+        <div class="notes">
           <article class="note">
-            <h3>Authentication</h3>
-            <p>Use the Supabase public API key for read-only requests. Never expose a service-role key in browser or client-side code.</p>
+            <div class="note-icon">◎</div>
+            <h3>Read-only access</h3>
+            <p>Use the Supabase public API key for client-side read requests. Never expose service-role credentials in frontend code.</p>
           </article>
           <article class="note">
-            <h3>Crypto speeds</h3>
-            <p>Speed ranges are approximate on-chain confirmation or finality estimates, not exchange withdrawal times or casino settlement promises.</p>
+            <div class="note-icon">↯</div>
+            <h3>Crypto speed caveat</h3>
+            <p>Speed ranges are approximate on-chain confirmation or finality estimates, not exchange withdrawal times or casino settlement guarantees.</p>
           </article>
           <article class="note">
+            <div class="note-icon">▦</div>
             <h3>Useful fields</h3>
             <ul>
               <li><code class="inline">ecosystem</code></li>
@@ -414,11 +546,16 @@ function landingPage() {
           </article>
         </div>
       </section>
+
+      <div class="cta-strip">
+        <p>Need the public site instead? Visit Crypto-Casinos.com for casino rankings, reviews, bonuses and player guides.</p>
+        <a class="button primary" href="https://crypto-casinos.com/">Go to Crypto-Casinos.com</a>
+      </div>
     </main>
 
     <footer>
-      <span>© ${new Date().getFullYear()} crypto-casinos.com</span>
-      <span>read-only api · cloudflare worker · supabase postgrest</span>
+      <span>© ${new Date().getFullYear()} Crypto-Casinos.com</span>
+      <span>Cloudflare Worker · Supabase PostgREST · read-only API</span>
     </footer>
   </div>
 </body>
