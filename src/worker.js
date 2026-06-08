@@ -251,7 +251,6 @@ function landingPage() {
       box-shadow: inset 0 0 0 1px rgba(0,0,0,.3);
       font-size: 14px;
     }
-    .trust-pill .shield { color: var(--orange); }
     .kicker {
       margin: 44px 0 18px;
       color: var(--teal);
@@ -470,7 +469,7 @@ function landingPage() {
     <main>
       <section class="hero">
         <div>
-          <div class="trust-pill"><span class="shield">♢</span> Read-only API for verified crypto casino data</div>
+          <div class="trust-pill">Read-only API for verified crypto casino data</div>
           <div class="kicker">Crypto Casinos Data API</div>
           <h1>Unlock source-backed <span class="muted-word">casino terms</span> and crypto payment data.</h1>
           <p class="lead">Skip the bullshit and query normalized casino terms, payment methods, restricted countries, game counts, and approximate crypto transaction-speed metadata.</p>
