@@ -133,13 +133,13 @@ const BRAND_LOGO_SVG = `<svg class="brand-logo-svg" role="img" aria-label="Crypt
 </svg>`;
 
 function landingPage() {
-  const endpointTiles = READ_ENDPOINTS.map((endpoint) => `
-    <a class="endpoint-tile" href="${endpoint.example}" aria-label="Open example for ${endpoint.name}">
-      <span class="tile-path">${endpoint.path}</span>
-      <strong>${endpoint.name}</strong>
-      <small>${endpoint.description}</small>
-      <span class="tile-cta">View example</span>
-    </a>
+  const endpointRows = READ_ENDPOINTS.map((endpoint) => `
+    <tr>
+      <td><strong>${endpoint.name}</strong></td>
+      <td><code>${endpoint.path}</code></td>
+      <td>${endpoint.description}</td>
+      <td><code>${endpoint.example}</code></td>
+    </tr>
   `).join('');
 
   const html = `<!doctype html>
@@ -296,46 +296,49 @@ function landingPage() {
       box-shadow: 0 12px 35px rgba(255,86,61,.2);
     }
     .button:hover { transform: translateY(-1px); border-color: var(--line-strong); }
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-    .endpoint-tile {
-      min-height: 188px;
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      text-decoration: none;
+    .endpoint-table-wrap {
+      overflow: auto;
       border: 1px solid var(--line-strong);
       border-radius: var(--radius);
       background: linear-gradient(135deg, rgba(255,255,255,.045), rgba(255,255,255,.018)), #17191b;
       box-shadow: inset 0 0 0 1px rgba(0,0,0,.62);
-      transition: transform .18s ease, border-color .18s ease, background-color .18s ease;
     }
-    .endpoint-tile:hover {
-      transform: translateY(-2px);
-      border-color: rgba(255,255,255,.28);
-      background-color: rgba(255,255,255,.035);
+    .endpoint-table {
+      width: 100%;
+      min-width: 860px;
+      border-collapse: collapse;
+      text-align: left;
     }
-    .tile-path {
+    .endpoint-table th,
+    .endpoint-table td {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    .endpoint-table tr:last-child td { border-bottom: 0; }
+    .endpoint-table th {
       color: var(--soft);
-      font: 700 12px/1.45 Inconsolata, ui-monospace, monospace;
-      letter-spacing: .02em;
-      word-break: break-all;
+      font: 700 12px/1.35 Inconsolata, ui-monospace, monospace;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.025);
     }
-    .endpoint-tile strong { margin-top: 4px; font-size: 22px; line-height: 1.18; letter-spacing: -.035em; }
-    .endpoint-tile small { color: #b7b7b7; font-size: 15px; line-height: 1.5; max-width: 300px; }
-    .tile-cta {
-      margin-top: auto;
-      color: var(--teal);
-      font-size: 14px;
-      font-weight: 700;
+    .endpoint-table td { color: #b7b7b7; line-height: 1.5; font-size: 15px; }
+    .endpoint-table strong { color: #fff; font-size: 17px; line-height: 1.25; letter-spacing: -.025em; }
+    .endpoint-table code {
+      color: #f2f2f2;
+      font: 600 13px/1.45 Inconsolata, ui-monospace, monospace;
+      word-break: break-all;
     }
     .section {
       padding: 72px 0;
       border-top: 1px solid var(--line);
+    }
+    .endpoint-section {
+      padding: 0 0 72px;
+    }
+    .section-head.compact {
+      margin-bottom: 22px;
     }
     .section-head {
       display: flex;
@@ -447,7 +450,7 @@ function landingPage() {
       .topbar { height: auto; padding: 18px 0; align-items: flex-start; }
       nav { gap: 16px; flex-wrap: wrap; justify-content: flex-end; }
       .hero { grid-template-columns: 1fr; padding-top: 52px; }
-      .quick-grid, .notes, .example-card { grid-template-columns: 1fr; }
+      .notes, .example-card { grid-template-columns: 1fr; }
       .example-copy { border-right: 0; border-bottom: 1px solid var(--line); }
       .section-head, .cta-strip, footer { flex-direction: column; align-items: flex-start; }
       h1 { font-size: clamp(46px, 12vw, 72px); }
@@ -480,9 +483,29 @@ function landingPage() {
         </div>
       </section>
 
-      <nav class="quick-grid" id="endpoints" aria-label="API endpoints">
-        ${endpointTiles}
-      </nav>
+      <section class="endpoint-section" id="endpoints" aria-labelledby="endpoints-heading">
+        <div class="section-head compact">
+          <div>
+            <h2 id="endpoints-heading">API endpoints</h2>
+            <p>Read-only Supabase views available through the Worker proxy.</p>
+          </div>
+        </div>
+        <div class="endpoint-table-wrap">
+          <table class="endpoint-table">
+            <thead>
+              <tr>
+                <th scope="col">Endpoint</th>
+                <th scope="col">Path</th>
+                <th scope="col">Description</th>
+                <th scope="col">Example query</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${endpointRows}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       <section class="section" id="example">
         <div class="section-head">
