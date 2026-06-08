@@ -133,13 +133,12 @@ const BRAND_LOGO_SVG = `<svg class="brand-logo-svg" role="img" aria-label="Crypt
 </svg>`;
 
 function landingPage() {
-  const endpointTiles = READ_ENDPOINTS.map((endpoint, index) => `
+  const endpointTiles = READ_ENDPOINTS.map((endpoint) => `
     <a class="endpoint-tile" href="${endpoint.example}" aria-label="Open example for ${endpoint.name}">
-      <span class="tile-icon">${['₿', '▦', '↯'][index] || '↗'}</span>
-      <span class="tile-arrow">↗</span>
       <span class="tile-path">${endpoint.path}</span>
       <strong>${endpoint.name}</strong>
       <small>${endpoint.description}</small>
+      <span class="tile-cta">View example</span>
     </a>
   `).join('');
 
@@ -301,62 +300,40 @@ function landingPage() {
     .quick-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius);
-      overflow: hidden;
-      background:
-        radial-gradient(circle at top left, rgba(255,255,255,.055), transparent 22rem),
-        linear-gradient(135deg, #181b1d, #17191b 55%, #1d2022);
-      box-shadow: var(--shadow), inset 0 0 0 1px rgba(0,0,0,.9);
+      gap: 14px;
     }
     .endpoint-tile {
-      position: relative;
-      min-height: 216px;
-      padding: 30px;
+      min-height: 188px;
+      padding: 28px;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      gap: 10px;
+      gap: 12px;
       text-decoration: none;
-      border-right: 1px solid var(--line);
-      isolation: isolate;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(255,255,255,.045), rgba(255,255,255,.018)), #17191b;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.62);
+      transition: transform .18s ease, border-color .18s ease, background-color .18s ease;
     }
-    .endpoint-tile:last-child { border-right: 0; }
-    .endpoint-tile::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
-      background-size: 9px 9px;
-      opacity: .08;
-      z-index: -1;
+    .endpoint-tile:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.28);
+      background-color: rgba(255,255,255,.035);
     }
-    .endpoint-tile:hover { background: rgba(255,255,255,.035); }
-    .tile-icon {
-      position: absolute;
-      top: 30px;
-      left: 30px;
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      color: #fff;
-      background: #0e0f10;
-      font-size: 22px;
-      font-weight: 700;
-    }
-    .endpoint-tile:nth-child(2) .tile-icon { color: var(--yellow); }
-    .endpoint-tile:nth-child(3) .tile-icon { color: var(--teal); }
-    .tile-arrow { position: absolute; top: 28px; right: 28px; color: #d7d7d7; font-size: 18px; }
     .tile-path {
       color: var(--soft);
-      font: 600 12px/1.4 Inconsolata, ui-monospace, monospace;
+      font: 700 12px/1.45 Inconsolata, ui-monospace, monospace;
+      letter-spacing: .02em;
       word-break: break-all;
-      text-transform: uppercase;
     }
-    .endpoint-tile strong { font-size: 19px; line-height: 1.25; letter-spacing: -.025em; }
-    .endpoint-tile small { color: #b7b7b7; font-size: 15px; line-height: 1.45; max-width: 260px; }
+    .endpoint-tile strong { margin-top: 4px; font-size: 22px; line-height: 1.18; letter-spacing: -.035em; }
+    .endpoint-tile small { color: #b7b7b7; font-size: 15px; line-height: 1.5; max-width: 300px; }
+    .tile-cta {
+      margin-top: auto;
+      color: var(--teal);
+      font-size: 14px;
+      font-weight: 700;
+    }
     .section {
       padding: 72px 0;
       border-top: 1px solid var(--line);
@@ -425,29 +402,14 @@ function landingPage() {
       gap: 14px;
     }
     .note {
-      min-height: 210px;
+      min-height: 188px;
       border: 1px solid var(--line-strong);
       border-radius: var(--radius);
-      background:
-        radial-gradient(circle at top left, rgba(255,255,255,.05), transparent 20rem),
-        linear-gradient(135deg, #1b1e20, #17191b);
-      padding: 30px;
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,.9);
+      background: linear-gradient(135deg, rgba(255,255,255,.045), rgba(255,255,255,.018)), #17191b;
+      padding: 28px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.62);
     }
-    .note-icon {
-      width: 48px;
-      height: 48px;
-      display: grid;
-      place-items: center;
-      border-radius: 14px;
-      background: rgba(255,255,255,.06);
-      color: var(--teal);
-      font-size: 24px;
-      margin-bottom: 34px;
-    }
-    .note:nth-child(2) .note-icon { color: var(--orange); }
-    .note:nth-child(3) .note-icon { color: var(--yellow); }
-    .note h3 { margin: 0 0 12px; font-size: 24px; line-height: 1.15; letter-spacing: -.04em; }
+    .note h3 { margin: 0 0 14px; font-size: 24px; line-height: 1.15; letter-spacing: -.04em; }
     .note p, .note li { color: #b8b8b8; line-height: 1.55; font-size: 15px; }
     .note p { margin: 0; }
     .note ul { margin: 0; padding-left: 18px; }
@@ -487,8 +449,6 @@ function landingPage() {
       nav { gap: 16px; flex-wrap: wrap; justify-content: flex-end; }
       .hero { grid-template-columns: 1fr; padding-top: 52px; }
       .quick-grid, .notes, .example-card { grid-template-columns: 1fr; }
-      .endpoint-tile { border-right: 0; border-bottom: 1px solid var(--line); }
-      .endpoint-tile:last-child { border-bottom: 0; }
       .example-copy { border-right: 0; border-bottom: 1px solid var(--line); }
       .section-head, .cta-strip, footer { flex-direction: column; align-items: flex-start; }
       h1 { font-size: clamp(46px, 12vw, 72px); }
@@ -564,17 +524,14 @@ function landingPage() {
         </div>
         <div class="notes">
           <article class="note">
-            <div class="note-icon">◎</div>
             <h3>Read-only access</h3>
             <p>Use the Supabase public API key for client-side read requests. Never expose service-role credentials in frontend code.</p>
           </article>
           <article class="note">
-            <div class="note-icon">↯</div>
             <h3>Crypto speed caveat</h3>
             <p>Speed ranges are approximate on-chain confirmation or finality estimates, not exchange withdrawal times or casino settlement guarantees.</p>
           </article>
           <article class="note">
-            <div class="note-icon">▦</div>
             <h3>Useful fields</h3>
             <ul>
               <li><code class="inline">ecosystem</code></li>
