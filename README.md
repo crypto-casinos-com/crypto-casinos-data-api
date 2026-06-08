@@ -154,20 +154,6 @@ Then attach the Worker to the custom domain or route:
 data-api.crypto-casinos.com/*
 ```
 
-## DNS note
-
-For the Worker setup, the subdomain should be proxied through Cloudflare, not pointed directly to Supabase DNS-only.
-
-A common originless Worker DNS record is:
-
-```text
-Type: AAAA
-Name: data-api
-Content: 100::
-Proxy status: Proxied
-TTL: Auto
-```
-
 ## License
 
 License choice depends on whether this repository is public or private. MIT is a good default for a public utility repo if you are comfortable allowing reuse with attribution.
