@@ -1,0 +1,11 @@
+name = "crypto-casinos-data-api"
+main = "src/worker.js"
+compatibility_date = "2026-06-08"
+
+# After you log in with Wrangler, deploy with:
+#   npx wrangler deploy
+# Then add a Workers Custom Domain or Route for:
+#   data-api.crypto-casinos.com/*
+
+[observability]
+enabled = true
